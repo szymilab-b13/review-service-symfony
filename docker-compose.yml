@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  app:
+    build: ./docker/php
+    container_name: review_app
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+    networks:
+      - review_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: review_mysql
+    environment:
+      MYSQL_DATABASE: review_db
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - review_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: review_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - review_network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: review_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - review_network
+
+  elasticsearch:
+    image: elasticsearch:8.12.0
+    container_name: review_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - review_network
+
+networks:
+  review_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  es_data:
