@@ -1,5 +1,11 @@
-controllers:
+auth_controllers:
     resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+        path: ../src/Auth/Infrastructure/Http/Controller/
+        namespace: App\Auth\Infrastructure\Http\Controller
+    type: attribute
+
+review_controllers:
+    resource:
+        path: ../src/Review/Infrastructure/Http/Controller/
+        namespace: App\Review\Infrastructure\Http\Controller
     type: attribute
