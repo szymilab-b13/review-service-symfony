@@ -4,11 +4,12 @@ namespace App\Auth\Application\Command;
 
 
 use App\Auth\Domain\Entity\User;
+use App\Auth\Domain\Exception\UserAlreadyExistsException;
+use App\Auth\Domain\Port\PasswordHasherInterface;
 use App\Auth\Domain\Repository\UserRepository;
 use App\Auth\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\UserId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Class RegisterCommandHandler
@@ -20,7 +21,7 @@ final readonly class RegisterCommandHandler
 {
     public function __construct(
         private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
+        private PasswordHasherInterface $passwordHasher,
     ) {
     }
 
@@ -29,13 +30,13 @@ final readonly class RegisterCommandHandler
         $email = Email::fromString($command->email);
 
         if ($this->userRepository->existsByEmail($email)) {
-            throw new \DomainException('User with this email already exists.');
+            throw new UserAlreadyExistsException($email);
         }
 
         $user = User::register(
             id: UserId::generate(),
             email: $email,
-            hashedPassword: $command->plainPassword,
+            hashedPassword: $this->passwordHasher->hash($command->plainPassword),
         );
 
         $this->userRepository->save($user);

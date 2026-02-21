@@ -7,12 +7,15 @@ use App\Auth\Domain\Repository\UserRepository;
 use App\Auth\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\UserId;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 /**
  * Class DoctrineUserRepository
  * @package App\Auth\Infrastructure\Doctrine\Repository
  * @author Tomasz Bielecki <bieleckitomasz94@gmail.com>
  */
+
+#[AsAlias(UserRepository::class)]
 final readonly class DoctrineUserRepository implements UserRepository
 {
     public function __construct(

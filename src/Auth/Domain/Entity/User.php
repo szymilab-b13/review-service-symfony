@@ -3,6 +3,7 @@
 namespace App\Auth\Domain\Entity;
 
 use App\Auth\Domain\ValueObject\Email;
+use App\Auth\Domain\ValueObject\HashedPassword;
 use App\Auth\Domain\ValueObject\Role;
 use App\Shared\Domain\ValueObject\UserId;
 
@@ -16,7 +17,7 @@ final class User
     private function __construct(
         private UserId $id,
         private Email $email,
-        private string $hashedPassword,
+        private HashedPassword $hashedPassword,
         private array $roles,
         private \DateTimeImmutable $createdAt,
     )
@@ -26,7 +27,7 @@ final class User
     public static function register(
         UserId $id,
         Email $email,
-        string $hashedPassword
+        HashedPassword $hashedPassword
     ): self
     {
         return new self(
@@ -48,7 +49,7 @@ final class User
         return $this->email;
     }
 
-    public function hashedPassword(): string
+    public function hashedPassword(): HashedPassword
     {
         return $this->hashedPassword;
     }
