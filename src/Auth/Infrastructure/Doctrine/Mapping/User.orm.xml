@@ -10,7 +10,7 @@
         </id>
 
         <field name="email" type="email_vo" length="180" unique="true"/>
-        <field name="hashedPassword" type="string" column="hashed_password"/>
+        <field name="hashedPassword" type="hashed_password_vo" column="hashed_password"/>
         <field name="roles" type="json"/>
         <field name="createdAt" type="datetime_immutable" column="created_at"/>
     </entity>

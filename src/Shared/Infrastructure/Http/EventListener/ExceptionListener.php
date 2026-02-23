@@ -23,10 +23,11 @@ final class ExceptionListener
 
     public function __invoke(ExceptionEvent $event): void
     {
-        /**
-         * TODO: move to custom exception
-         */
         $exception = $event->getThrowable();
+
+        if ($exception instanceof \Symfony\Component\Messenger\Exception\HandlerFailedException) {
+            $exception = $exception->getPrevious() ?? $exception;
+        }
 
         foreach (self::EXCEPTION_MAP as $class => $statusCode) {
             if ($exception instanceof $class) {

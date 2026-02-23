@@ -14,7 +14,7 @@ final class UserAlreadyExistsException extends \DomainException
     public function __construct(Email $email)
     {
         parent::__construct(
-            sprintf('User with email "%s" already exists.', $email->toString())
+            sprintf('User with email "%s" already exists.', $email)
         );
     }
 }
