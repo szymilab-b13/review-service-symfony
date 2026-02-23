@@ -10,7 +10,9 @@ namespace App\Review\Domain\ValueObject;
 final readonly class TenantId
 {
     private function __construct(public string $value)
-    {}
+    {
+
+    }
 
     public static function fromString(string $id): self
     {

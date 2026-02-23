@@ -12,7 +12,9 @@ use \Symfony\Component\Uid\Uuid;
 final readonly class ReviewId
 {
     private function __construct(public string $value)
-    {}
+    {
+
+    }
 
     public static function generate(): self
     {

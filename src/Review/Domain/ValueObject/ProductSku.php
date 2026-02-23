@@ -10,7 +10,9 @@ namespace App\Review\Domain\ValueObject;
 final readonly class ProductSku
 {
     private function __construct(public string $value)
-    {}
+    {
+
+    }
 
     public static function fromString(string $sku): self
     {

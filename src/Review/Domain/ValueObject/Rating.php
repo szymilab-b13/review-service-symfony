@@ -11,7 +11,9 @@ use App\Review\Domain\Exception\InvalidRatingException;
 final readonly class Rating
 {
     private function __construct(public int $value)
-    {}
+    {
+
+    }
 
     /**
      * @param int $value

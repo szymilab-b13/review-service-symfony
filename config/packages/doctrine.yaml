@@ -2,10 +2,18 @@ doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
         types:
+            # shared types
             user_id: App\Shared\Infrastructure\Doctrine\Type\UserIdType
+            # auth types
             email_vo: App\Auth\Infrastructure\Doctrine\Type\EmailType
             hashed_password_vo: App\Auth\Infrastructure\Doctrine\Type\HashedPasswordType
             roles_vo: App\Auth\Infrastructure\Doctrine\Type\RolesType
+            # review types
+            product_sku_vo: App\Review\Infrastructure\Doctrine\Type\ProductSkuType
+            rating_vo: App\Review\Infrastructure\Doctrine\Type\RatingType
+            review_id_vo: App\Review\Infrastructure\Doctrine\Type\ReviewIdType
+            review_status_vo: App\Review\Infrastructure\Doctrine\Type\ReviewStatusType
+            tenant_id_vo: App\Review\Infrastructure\Doctrine\Type\TenantIdType
 
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)
@@ -24,6 +32,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Auth/Infrastructure/Doctrine/Mapping'
                 prefix: App\Auth\Domain\Entity
                 is_bundle: false
+
+            Review:
+                type: xml
+                dir: '%kernel.project_dir%/src/Review/Infrastructure/Doctrine/Mapping'
+                prefix: App\Review\Domain\Entity
+                is_bundle: false
+
         controller_resolver:
             auto_mapping: false
 
