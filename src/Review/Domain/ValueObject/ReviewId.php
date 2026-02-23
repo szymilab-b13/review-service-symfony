@@ -1,19 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace App\Shared\Domain\ValueObject;
+namespace App\Review\Domain\ValueObject;
 
 use \Symfony\Component\Uid\Uuid;
 
 /**
- * Class UserId
- * @package App\Shared\Domain\ValueObject
+ * Class ReviewId
+ * @package App\Review\Domain\ValueObject
  * @author Tomasz Bielecki <bieleckitomasz94@gmail.com>
  */
-final readonly class UserId
+final readonly class ReviewId
 {
-    private function __construct(
-        public string $value
-    ) {}
+    private function __construct(public string $value)
+    {}
 
     public static function generate(): self
     {
