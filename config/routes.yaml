@@ -9,3 +9,5 @@ review_controllers:
         path: ../src/Review/Infrastructure/Http/Controller/
         namespace: App\Review\Infrastructure\Http\Controller
     type: attribute
+api_auth_login:
+    path: /api/auth/login
