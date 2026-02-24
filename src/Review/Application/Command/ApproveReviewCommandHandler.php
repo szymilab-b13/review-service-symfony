@@ -20,16 +20,9 @@ final readonly class ApproveReviewCommandHandler
 
     public function __invoke(ApproveReviewCommand $command): void
     {
-        $review = $this->repository->findById(
+        $review = $this->repository->getById(
             ReviewId::fromString($command->reviewId)
         );
-
-
-        if ($review === null) {
-            throw new \RuntimeException(
-                sprintf('Review "%s" not found.', $command->reviewId)
-            );
-        }
 
         $review->approve();
         $this->repository->save($review);

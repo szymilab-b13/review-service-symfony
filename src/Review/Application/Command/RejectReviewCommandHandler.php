@@ -19,15 +19,9 @@ final readonly class RejectReviewCommandHandler
 
     public function __invoke(RejectReviewCommand $command): void
     {
-        $review = $this->repository->findById(
+        $review = $this->repository->getById(
             ReviewId::fromString($command->reviewId)
         );
-
-        if ($review === null) {
-            throw new \RuntimeException(
-                sprintf('Review "%s" not found.', $command->reviewId)
-            );
-        }
 
         $review->reject($command->reason);
         $this->repository->save($review);

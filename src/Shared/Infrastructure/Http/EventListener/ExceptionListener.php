@@ -2,6 +2,7 @@
 
 namespace App\Shared\Infrastructure\Http\EventListener;
 
+use App\Shared\Domain\Exception\NotFoundException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class ExceptionListener
 {
     private const EXCEPTION_MAP = [
+        NotFoundException::class         => Response::HTTP_NOT_FOUND,
         \DomainException::class          => Response::HTTP_CONFLICT,
         \InvalidArgumentException::class => Response::HTTP_BAD_REQUEST,
     ];

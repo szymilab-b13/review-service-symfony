@@ -3,6 +3,7 @@
 namespace App\Review\Infrastructure\Doctrine\Repository;
 
 use App\Review\Domain\Entity\Review;
+use App\Review\Domain\Exception\ReviewNotFoundException;
 use App\Review\Domain\Repository\ReviewRepository;
 use App\Review\Domain\ValueObject\ProductSku;
 use App\Review\Domain\ValueObject\ReviewId;
@@ -28,6 +29,16 @@ class DoctrineReviewRepository implements ReviewRepository
     public function findById(ReviewId $id): ?Review
     {
         return $this->em->find(Review::class, $id->value);
+    }
+
+    /**
+     * @param ReviewId $id
+     * @return Review
+     * @throws ReviewNotFoundException
+     */
+    public function getById(ReviewId $id): Review
+    {
+        return $this->findById($id) ?? throw ReviewNotFoundException::withId($id->value);
     }
 
     public function findByProductSku(ProductSku $sku): array

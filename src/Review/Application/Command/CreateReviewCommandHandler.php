@@ -27,7 +27,7 @@ final readonly class CreateReviewCommandHandler
 
     public function __invoke(CreateReviewCommand $command): void
     {
-        $tenantId = TenantId::fromString($command->tenantId);
+        $tenantId   = TenantId::fromString($command->tenantId);
         $productSku = ProductSku::fromString($command->productSku);
 
         /**
