@@ -2,6 +2,7 @@
 
 namespace App\Review\Application\Query;
 
+use App\Review\Application\ReadModel\CommentReadModel;
 use App\Review\Application\ReadModel\ReviewReadModel;
 use App\Review\Domain\Repository\ReviewRepository;
 use App\Review\Domain\ValueObject\ReviewId;
@@ -20,7 +21,7 @@ final readonly class GetReviewQueryHandler
 
     public function __invoke(GetReviewQuery $query): ReviewReadModel
     {
-        $review = $this->repository->getById(ReviewId::fromString($query->reviewId));
+        $review = $this->repository->getByIdWithComments(ReviewId::fromString($query->reviewId));
 
         return new ReviewReadModel(
             id: $review->id()->value,
@@ -37,6 +38,15 @@ final readonly class GetReviewQueryHandler
             moderatedAt: $review->moderatedAt()?->format('c'),
             tags: $review->tags(),
             createdAt: $review->createdAt()->format('c'),
+            comments: $review->comments()->map(
+                fn(\App\Review\Domain\Entity\ReviewComment $c) => new CommentReadModel(
+                    id: $c->id()->value,
+                    authorId: $c->authorId()->value,
+                    authorName: $c->authorName(),
+                    content: $c->content(),
+                    createdAt: $c->createdAt()->format('c'),
+                )
+            )->toArray(),
         );
     }
 }

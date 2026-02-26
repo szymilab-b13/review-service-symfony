@@ -22,6 +22,16 @@
         <field name="rejectionReason" type="string" column="rejection_reason" nullable="true" length="500"/>
         <field name="tags" type="json"/>
         <field name="createdAt" type="datetime_immutable" column="created_at"/>
+
+        <one-to-many field="comments"  target-entity="App\Review\Domain\Entity\ReviewComment"  mapped-by="review" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="createdAt" direction="ASC"/>
+            </order-by>
+        </one-to-many>
     </entity>
 
 </doctrine-mapping>

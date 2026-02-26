@@ -25,6 +25,13 @@ interface ReviewRepository
      */
     public function getById(ReviewId $id): Review;
 
+    /**
+     * @param ReviewId $id
+     * @return Review
+     * @throws ReviewNotFoundException
+     */
+    public function getByIdWithComments(ReviewId $id): Review;
+
     /** @return Review[] */
     public function findByProductSku(ProductSku $sku): array;
 

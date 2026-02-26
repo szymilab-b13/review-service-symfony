@@ -27,6 +27,7 @@ final readonly class ReviewReadModel
         public ?string $moderatedAt,
         public array $tags,
         public string $createdAt,
+        public array $comments = [],
     ) {}
 }
  

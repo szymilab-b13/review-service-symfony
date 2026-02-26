@@ -41,6 +41,29 @@ class DoctrineReviewRepository implements ReviewRepository
         return $this->findById($id) ?? throw ReviewNotFoundException::withId($id->value);
     }
 
+    /**
+     * @param ReviewId $id
+     * @return Review
+     * @throws ReviewNotFoundException
+     */
+    public function getByIdWithComments(ReviewId $id): Review
+    {
+        $review = $this->em->createQueryBuilder()
+            ->select('r', 'c')
+            ->from(Review::class, 'r')
+            ->leftJoin('r.comments', 'c')
+            ->where('r.id = :id')
+            ->setParameter('id', $id->value)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($review === null) {
+            throw ReviewNotFoundException::withId($id->value);
+        }
+
+        return $review;
+    }
+
     public function findByProductSku(ProductSku $sku): array
     {
         return $this->em->getRepository(Review::class)
