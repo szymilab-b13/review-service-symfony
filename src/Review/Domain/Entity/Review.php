@@ -4,10 +4,14 @@ namespace App\Review\Domain\Entity;
 
 use App\Review\Domain\Enum\ReviewStatus;
 use App\Review\Domain\Exception\InvalidStatusTransitionException;
+use App\Review\Domain\ValueObject\CommentId;
 use App\Review\Domain\ValueObject\ProductSku;
 use App\Review\Domain\ValueObject\Rating;
 use App\Review\Domain\ValueObject\ReviewId;
 use App\Review\Domain\ValueObject\TenantId;
+use App\Shared\Domain\ValueObject\UserId;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Class Review
@@ -18,6 +22,9 @@ final class Review
 {
     private ReviewStatus $status;
     private ?string $rejectionReason = null;
+    private ?UserId $moderatorId = null;
+    private ?\DateTimeImmutable $moderatedAt = null;
+    private Collection $comments;
 
     /**
      * @param ReviewId $id
@@ -27,7 +34,8 @@ final class Review
      * @param string $title
      * @param string $body
      * @param string $authorName
-     * @param string[] $tags
+     * @param UserId $authorId
+     * @param array $tags
      * @param \DateTimeImmutable $createdAt
      */
     private function __construct(
@@ -38,11 +46,13 @@ final class Review
         private string             $title,
         private string             $body,
         private string             $authorName,
+        private UserId             $authorId,
         private array              $tags,
         private \DateTimeImmutable $createdAt,
     )
     {
-        $this->status = ReviewStatus::PENDING;
+        $this->status   = ReviewStatus::PENDING;
+        $this->comments = new ArrayCollection();
     }
 
     public static function create(
@@ -53,6 +63,7 @@ final class Review
         string     $title,
         string     $body,
         string     $authorName,
+        UserId     $authorId,
         array      $tags = [],
     ): self
     {
@@ -64,6 +75,7 @@ final class Review
             $title,
             $body,
             $authorName,
+            $authorId,
             $tags,
             new \DateTimeImmutable());
     }
@@ -103,6 +115,11 @@ final class Review
         return $this->authorName;
     }
 
+    public function authorId(): UserId
+    {
+        return $this->authorId;
+    }
+
     public function status(): ReviewStatus
     {
         return $this->status;
@@ -111,6 +128,16 @@ final class Review
     public function rejectionReason(): ?string
     {
         return $this->rejectionReason;
+    }
+
+    public function moderatorId(): ?UserId
+    {
+        return $this->moderatorId;
+    }
+
+    public function moderatedAt(): ?\DateTimeImmutable
+    {
+        return $this->moderatedAt;
     }
 
     /**
@@ -126,6 +153,30 @@ final class Review
         return $this->createdAt;
     }
 
+    /** @return Collection<int, ReviewComment> */
+    public function comments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(
+        CommentId $commentId,
+        UserId    $authorId,
+        string    $authorName,
+        string    $content,
+    ): ReviewComment {
+        $comment = ReviewComment::create(
+            $commentId,
+            $this,
+            $authorId,
+            $authorName,
+            $content,
+        );
+        $this->comments->add($comment);
+
+        return $comment;
+    }
+
     private function changeStatus(ReviewStatus $newStatus): void
     {
         if (!$this->status->canTransitionTo($newStatus)) {
@@ -134,15 +185,19 @@ final class Review
         $this->status = $newStatus;
     }
 
-    public function approve(): void
+    public function approve(UserId $moderatorId): void
     {
         $this->changeStatus(ReviewStatus::APPROVED);
+        $this->moderatorId = $moderatorId;
+        $this->moderatedAt = new \DateTimeImmutable();
     }
 
-    public function reject(string $reason): void
+    public function reject(UserId $moderatorId, string $reason): void
     {
         $this->changeStatus(ReviewStatus::REJECTED);
-        $this->rejectionReason = $reason;
+        $this->moderatorId      = $moderatorId;
+        $this->rejectionReason  = $reason;
+        $this->moderatedAt      = new \DateTimeImmutable();
     }
 }
  

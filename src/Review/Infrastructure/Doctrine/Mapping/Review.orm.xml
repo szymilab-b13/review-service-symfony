@@ -16,6 +16,9 @@
         <field name="title" type="string" length="255"/>
         <field name="body" type="text"/>
         <field name="authorName" type="string" column="author_name" length="100"/>
+        <field name="authorId" type="user_id" column="author_id" length="36"/>
+        <field name="moderatorId" type="user_id" column="moderator_id" length="36" nullable="true"/>
+        <field name="moderatedAt" type="datetime_immutable" column="moderated_at" nullable="true"/>
         <field name="rejectionReason" type="string" column="rejection_reason" nullable="true" length="500"/>
         <field name="tags" type="json"/>
         <field name="createdAt" type="datetime_immutable" column="created_at"/>

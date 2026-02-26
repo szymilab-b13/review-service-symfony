@@ -4,13 +4,15 @@ namespace App\Review\Infrastructure\Http\Controller;
 
 use App\Review\Application\Command\CreateReviewCommand;
 use App\Review\Infrastructure\Http\Request\CreateReviewRequest;
+use App\Shared\Application\Port\CurrentUserIdResolverInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Uid\Uuid;
+
 /**
  * Class CreateReviewController
  * @package App\Review\Infrastructure\Http\Controller
@@ -22,6 +24,7 @@ final readonly class CreateReviewController
 {
     public function __construct(
         private MessageBusInterface $messageBus,
+        private CurrentUserIdResolverInterface $currentUserId,
     ) {
     }
 
@@ -30,7 +33,7 @@ final readonly class CreateReviewController
         #[MapRequestPayload] CreateReviewRequest $request,
     ): JsonResponse
     {
-        $reviewId = Uuid::v4()->toRfc4122();
+        $reviewId   = Uuid::v4()->toRfc4122();
 
         $this->messageBus->dispatch(
             new CreateReviewCommand(
@@ -41,6 +44,7 @@ final readonly class CreateReviewController
                 title: $request->title,
                 body: $request->body,
                 authorName: $request->authorName,
+                authorId: $this->currentUserId->resolve(),
                 tags: $request->tags,
             )
         );

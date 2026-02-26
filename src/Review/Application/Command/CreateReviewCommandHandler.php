@@ -10,6 +10,7 @@ use App\Review\Domain\ValueObject\ProductSku;
 use App\Review\Domain\ValueObject\Rating;
 use App\Review\Domain\ValueObject\ReviewId;
 use App\Review\Domain\ValueObject\TenantId;
+use App\Shared\Domain\ValueObject\UserId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 /**
  * Class CreateReviewCommandHandler
@@ -44,6 +45,7 @@ final readonly class CreateReviewCommandHandler
             title: $command->title,
             body: $command->body,
             authorName: $command->authorName,
+            authorId: UserId::fromString($command->authorId),
             tags: $command->tags,
         );
 

@@ -27,14 +27,15 @@ final class User
     public static function register(
         UserId $id,
         Email $email,
-        HashedPassword $hashedPassword
+        HashedPassword $hashedPassword,
+        array $roles = [Role::USER],
     ): self
     {
         return new self(
             id: $id,
             email: $email,
             hashedPassword: $hashedPassword,
-            roles: [Role::USER],
+            roles: $roles,
             createdAt: new \DateTimeImmutable(),
         );
     }

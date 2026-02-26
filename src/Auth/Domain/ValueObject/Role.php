@@ -12,5 +12,15 @@ enum Role: string
     case USER = 'ROLE_USER';
     case ADMIN = 'ROLE_ADMIN';
     case MODERATOR = 'ROLE_MODERATOR';
+
+    /** @return Role[] */
+    public static function fromStringList(array $roles): array
+    {
+        if (empty($roles)) {
+            return [self::USER];
+        }
+
+        return array_map(fn(string $r) => self::from($r), $roles);
+    }
 }
  

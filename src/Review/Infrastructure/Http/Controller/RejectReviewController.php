@@ -4,12 +4,14 @@ namespace App\Review\Infrastructure\Http\Controller;
 
 use App\Review\Application\Command\RejectReviewCommand;
 use App\Review\Infrastructure\Http\Request\RejectReviewRequest;
+use App\Shared\Application\Port\CurrentUserIdResolverInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Class RejectReviewController
@@ -22,20 +24,24 @@ final readonly class RejectReviewController
 {
     public function __construct(
         private MessageBusInterface $messageBus,
+        private CurrentUserIdResolverInterface $currentUserId,
     ) {
 
     }
 
     #[Route('/api/reviews/{id}/reject', name: 'review_reject', methods: ['PATCH'])]
+    #[IsGranted('ROLE_MODERATOR')]
     public function __invoke(
         string $id,
         #[MapRequestPayload] RejectReviewRequest $request,
     ): JsonResponse
     {
+
         $this->messageBus->dispatch(
             new RejectReviewCommand(
                 reviewId: $id,
                 reason: $request->reason,
+                moderatorId: $this->currentUserId->resolve(),
             )
         );
 

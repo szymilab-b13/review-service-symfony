@@ -12,6 +12,7 @@ final readonly class RejectReviewCommand
     public function __construct(
         public string $reviewId,
         public string $reason,
+        public string $moderatorId,
     ) {}
 }
  

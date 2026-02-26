@@ -8,6 +8,7 @@ use App\Auth\Domain\Exception\UserAlreadyExistsException;
 use App\Auth\Domain\Port\PasswordHasherInterface;
 use App\Auth\Domain\Repository\UserRepository;
 use App\Auth\Domain\ValueObject\Email;
+use App\Auth\Domain\ValueObject\Role;
 use App\Shared\Domain\ValueObject\UserId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -37,6 +38,7 @@ final readonly class RegisterCommandHandler
             id: UserId::generate(),
             email: $email,
             hashedPassword: $this->passwordHasher->hash($command->plainPassword),
+            roles: Role::fromStringList($command->roles),
         );
 
         $this->userRepository->save($user);

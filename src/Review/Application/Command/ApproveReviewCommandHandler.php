@@ -4,6 +4,7 @@ namespace App\Review\Application\Command;
 
 use App\Review\Domain\Repository\ReviewRepository;
 use App\Review\Domain\ValueObject\ReviewId;
+use App\Shared\Domain\ValueObject\UserId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -24,7 +25,7 @@ final readonly class ApproveReviewCommandHandler
             ReviewId::fromString($command->reviewId)
         );
 
-        $review->approve();
+        $review->approve(UserId::fromString($command->moderatorId));
         $this->repository->save($review);
     }
 }

@@ -11,6 +11,7 @@ final readonly class ApproveReviewCommand
 {
     public function __construct(
         public string $reviewId,
+        public string $moderatorId,
     ) {}
 }
  

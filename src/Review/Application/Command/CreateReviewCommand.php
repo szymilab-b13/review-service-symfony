@@ -27,6 +27,7 @@ final readonly class CreateReviewCommand
         public string $title,
         public string $body,
         public string $authorName,
+        public string $authorId,
         public array $tags = [],
     ) {}
 }

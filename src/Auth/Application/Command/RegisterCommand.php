@@ -12,6 +12,7 @@ final readonly class RegisterCommand
     public function __construct(
         public string $email,
         public string $plainPassword,
+        public array $roles = [],
     ) {
     }
 }

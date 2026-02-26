@@ -20,8 +20,11 @@ final readonly class ReviewReadModel
         public string $title,
         public string $body,
         public string $authorName,
+        public string $authorId,
         public string $status,
         public ?string $rejectionReason,
+        public ?string $moderatorId,
+        public ?string $moderatedAt,
         public array $tags,
         public string $createdAt,
     ) {}

@@ -30,8 +30,11 @@ final readonly class GetReviewQueryHandler
             title: $review->title(),
             body: $review->body(),
             authorName: $review->authorName(),
+            authorId: $review->authorId()->value,
             status: $review->status()->value,
             rejectionReason: $review->rejectionReason(),
+            moderatorId: $review->moderatorId()?->value,
+            moderatedAt: $review->moderatedAt()?->format('c'),
             tags: $review->tags(),
             createdAt: $review->createdAt()->format('c'),
         );
