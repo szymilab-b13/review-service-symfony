@@ -10,6 +10,7 @@
         "doctrine/doctrine-bundle": "^3.2",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6",
+        "elasticsearch/elasticsearch": "^8.0",
         "lexik/jwt-authentication-bundle": "^3.2",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",

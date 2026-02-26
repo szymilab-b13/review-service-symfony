@@ -2,6 +2,8 @@
 
 namespace App\Review\Infrastructure\Search;
 use App\Review\Application\Port\ReviewSearchInterface;
+use Elastic\Elasticsearch\Client;
+
 /**
  * Class SearchEngineReviewSearch
  * @package App\Review\Infrastructure\Search
@@ -9,27 +11,59 @@ use App\Review\Application\Port\ReviewSearchInterface;
  */
 final class SearchEngineReviewSearch implements ReviewSearchInterface
 {
+    private const INDEX = 'reviews';
+
     public function __construct(
-        private string $searchBackend,
-    ) {
-        // TODO: inject ElasticsearchClient and ReviewRepository for DB fallback
-    }
+        private Client $client,
+        private string $indexPrefix,
+    ) {}
 
     public function search(string $query, array $filters = []): array
     {
-        //TODO: move as chain pattern ?
-        if ($this->searchBackend === 'elastic') {
-            return $this->searchElastic($query, $filters);
-        }
+        return $this->searchElastic($query, $filters);
 
-        return $this->searchDatabase($query, $filters);
+        //TODO: move as chain pattern ?
+//        if ($this->searchBackend === 'elastic') {
+//            return $this->searchElastic($query, $filters);
+//        }
+
+//        return $this->searchDatabase($query, $filters);
     }
 
     private function searchElastic(string $query, array $filters): array
     {
-        // TODO:
+        $must = [];
 
-        return [];
+        if ($query !== '') {
+            $must[] = [
+                'multi_match' => [
+                    'query'  => $query,
+                    'fields' => ['title^3', 'body', 'author_name', 'tags'],
+                    'fuzziness' => 'AUTO',
+                ],
+            ];
+        }
+
+        foreach ($filters as $field => $value) {
+            $must[] = ['term' => [$field => $value]];
+        }
+
+        $response = $this->client->search([
+            'index' => $this->indexPrefix . '_'.self::INDEX,
+            'body'  => [
+                'query' => [
+                    'bool' => [
+                        'must' => $must ?: [['match_all' => (object)[]]],
+                    ],
+                ],
+                'size' => 20,
+            ],
+        ]);
+
+        return array_map(
+            fn(array $hit) => $hit['_source'] + ['id' => $hit['_id']],
+            $response['hits']['hits']
+        );
     }
 
     private function searchDatabase(string $query, array $filters): array

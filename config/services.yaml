@@ -4,6 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    elasticsearch_host: '%env(ELASTICSEARCH_URL)%'
+    elasticsearch_index_prefix: '%env(ELASTICSEARCH_INDEX_PREFIX)%'
 
 services:
     # default configuration for services in *this* file
@@ -25,3 +27,20 @@ services:
     # please note that last definitions always *replace* previous ones
 
     Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher: ~
+
+    Elastic\Elasticsearch\Client:
+        factory: [ 'Elastic\Elasticsearch\ClientBuilder', 'fromConfig' ]
+        arguments:
+            - hosts: [ '%elasticsearch_host%' ]
+
+    App\Review\Infrastructure\Search\ElasticsearchReviewIndexer:
+        arguments:
+            $indexPrefix: '%elasticsearch_index_prefix%'
+
+    App\Review\Infrastructure\Search\SearchEngineReviewSearch:
+        arguments:
+            $indexPrefix: '%elasticsearch_index_prefix%'
+
+    App\Review\Infrastructure\Console\CreateReviewIndexCommand:
+        arguments:
+            $indexPrefix: '%elasticsearch_index_prefix%'

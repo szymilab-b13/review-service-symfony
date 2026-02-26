@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 /**
  * Class GetReviewController
@@ -22,7 +23,12 @@ final readonly class GetReviewController
         private MessageBusInterface $messageBus,
     ) {}
 
-    #[Route('/api/reviews/{id}', name: 'review_get', methods: ['GET'])]
+    #[Route(
+        '/api/reviews/{id}',
+        name: 'review_get',
+        methods: ['GET'],
+        requirements: ['id' => Requirement::UUID_V4]
+    )]
     public function __invoke(string $id): JsonResponse
     {
         $envelope   = $this->messageBus->dispatch(new GetReviewQuery(reviewId: $id));
