@@ -12,6 +12,8 @@ use App\Review\Domain\ValueObject\ReviewId;
 use App\Review\Domain\ValueObject\TenantId;
 use App\Shared\Domain\ValueObject\UserId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
+
 /**
  * Class CreateReviewCommandHandler
  * @package App\Review\Application\Command
@@ -24,6 +26,7 @@ final readonly class CreateReviewCommandHandler
     public function __construct(
         private ReviewRepository $repository,
         private ReviewCreationPolicy $policy,
+        private MessageBusInterface $eventBus,
     ) {}
 
     public function __invoke(CreateReviewCommand $command): void
@@ -50,6 +53,10 @@ final readonly class CreateReviewCommandHandler
         );
 
         $this->repository->save($review);
+
+        foreach ($review->pullEvents() as $event) {
+            $this->eventBus->dispatch($event);
+        }
     }
 }
  

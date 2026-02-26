@@ -9,6 +9,7 @@ use App\Review\Domain\ValueObject\ProductSku;
 use App\Review\Domain\ValueObject\Rating;
 use App\Review\Domain\ValueObject\ReviewId;
 use App\Review\Domain\ValueObject\TenantId;
+use App\Shared\Domain\Aggregate\RecordsEvents;
 use App\Shared\Domain\ValueObject\UserId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,6 +21,8 @@ use Doctrine\Common\Collections\Collection;
  */
 final class Review
 {
+    use RecordsEvents;
+
     private ReviewStatus $status;
     private ?string $rejectionReason = null;
     private ?UserId $moderatorId = null;
@@ -67,7 +70,7 @@ final class Review
         array      $tags = [],
     ): self
     {
-        return new self(
+        $review = new self(
             $id,
             $tenantId,
             $productSku,
@@ -78,6 +81,10 @@ final class Review
             $authorId,
             $tags,
             new \DateTimeImmutable());
+
+        $review->record(new \App\Review\Domain\Event\ReviewCreatedEvent($id->value));
+
+        return $review;
     }
 
     public function id(): ReviewId
