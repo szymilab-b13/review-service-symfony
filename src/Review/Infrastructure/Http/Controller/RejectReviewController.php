@@ -36,7 +36,6 @@ final readonly class RejectReviewController
         #[MapRequestPayload] RejectReviewRequest $request,
     ): JsonResponse
     {
-
         $this->messageBus->dispatch(
             new RejectReviewCommand(
                 reviewId: $id,

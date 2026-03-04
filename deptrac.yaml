@@ -1,0 +1,85 @@
+deptrac:
+  paths:
+    - ./src
+
+  layers:
+    - name: Auth_Domain
+      collectors:
+        - type: directory
+          value: src/Auth/Domain/.*
+
+    - name: Auth_Application
+      collectors:
+        - type: directory
+          value: src/Auth/Application/.*
+
+    - name: Auth_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Auth/Infrastructure/.*
+
+    - name: Review_Domain
+      collectors:
+        - type: directory
+          value: src/Review/Domain/.*
+
+    - name: Review_Application
+      collectors:
+        - type: directory
+          value: src/Review/Application/.*
+
+    - name: Review_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Review/Infrastructure/.*
+
+    - name: Shared_Domain
+      collectors:
+        - type: directory
+          value: src/Shared/Domain/.*
+
+    - name: Shared_Application
+      collectors:
+        - type: directory
+          value: src/Shared/Application/.*
+
+    - name: Shared_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Shared/Infrastructure/.*
+
+  ruleset:
+    Auth_Domain:
+      - Shared_Domain
+    Auth_Application:
+      - Auth_Domain
+      - Shared_Domain
+      - Shared_Application
+    Auth_Infrastructure:
+      - Auth_Application
+      - Auth_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure
+
+    Review_Domain:
+      - Shared_Domain
+    Review_Application:
+      - Review_Domain
+      - Shared_Domain
+      - Shared_Application
+    Review_Infrastructure:
+      - Review_Application
+      - Review_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure
+
+    Shared_Domain: []
+    Shared_Application:
+      - Shared_Domain
+    Shared_Infrastructure:
+      - Shared_Application
+      - Shared_Domain
+
+  skip_violations: {}
